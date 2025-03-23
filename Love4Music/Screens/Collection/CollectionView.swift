@@ -1,56 +1,70 @@
+//
+//  CollectionView.swift
+//  Love4Music
+//
+//  Created by Martin Ševčík on 19.03.2025.
+//
 import SwiftUI
 
 struct CollectionView: View {
-    @StateObject private var viewModel = CollectionViewModel()
+    @StateObject var viewModel: CollectionViewModel
     @State private var isShowingAddAlbum = false
+
+    // three-column grid
+    let columns = [
+        GridItem(.flexible(), spacing: 20),
+        GridItem(.flexible(), spacing: 20),
+        GridItem(.flexible(), spacing: 20)
+    ]
     
-    let columns = [GridItem(.flexible(), spacing: 10),
-                   GridItem(.flexible(), spacing: 10),
-                   GridItem(.flexible(), spacing: 10)]
+    // custom initializer ( dependency injection of a view model )
+    init(viewModel: CollectionViewModel = CollectionViewModel()) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
     
     var body: some View {
         NavigationStack {
             ZStack {
+                // if there are no albums, display a placeholder view
                 if viewModel.albums.isEmpty {
                     NoAlbumsYetView()
                 } else {
+                    // display albums in a scrollable grid
                     ScrollView {
-                        LazyVGrid(columns: columns, spacing: 20) {
+                        LazyVGrid(columns: columns, spacing: 10) {
                             ForEach(viewModel.albums, id: \.id) { album in
-                                VStack {
+                                VStack(spacing: 5) {
+                                    // load album image asynchronously
                                     if let url = URL(string: album.imageURL), !album.imageURL.isEmpty {
-                                        AsyncImage(url: url) { image in
-                                            image.resizable().scaledToFit()
-                                        } placeholder: {
-                                            Image("albumMock").resizable().scaledToFit()
-                                        }
-                                        .frame(width: 120, height: 120)
-                                        .cornerRadius(8)
+                                        CachedAsyncImage(url: url)
+                                            .scaledToFit()
+                                            .frame(width: 114, height: 114)
+                                            .cornerRadius(8)
                                     } else {
+                                        // fallback image if no valid URL exists
                                         Image("albumMock")
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(width: 120, height: 120)
+                                            .frame(width: 114, height: 114)
                                             .cornerRadius(8)
                                     }
                                     
+                                    // display album name below the image
                                     Text(album.name)
-                                        .font(.title2)
+                                        .font(.caption)
                                         .lineLimit(1)
-                                        .padding(.top, 5)
                                 }
-                                .onLongPressGesture {
-                                    withAnimation {
-                                        viewModel.selectedAlbum = album
-                                    }
+                                // set the selected album when tapped
+                                .onTapGesture {
+                                    viewModel.selectedAlbum = album
                                 }
                             }
                         }
-                        .padding(.horizontal)
+                        .padding()
                     }
                 }
                 
-                // Floating plus button
+                // floating plus button in the bottom-right corner
                 VStack {
                     Spacer()
                     HStack {
@@ -58,41 +72,31 @@ struct CollectionView: View {
                         Button(action: {
                             isShowingAddAlbum = true
                         }) {
-                            Image(systemName: "plus.rectangle.fill")
-                                .resizable()
-                                .frame(width: 80, height: 60)
+                            Image(systemName: "plus")
+                                .font(.system(size: 24, weight: .bold))
                                 .padding()
+                                .background(Circle().fill(Color.accentColor))
+                                .foregroundColor(.darkest)
                         }
                         .padding()
                     }
                 }
-                
-                // Modal for AlbumDetailView
-                if let album = viewModel.selectedAlbum {
-                    Color.black.opacity(0.5)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation {
-                                viewModel.selectedAlbum = nil
-                            }
-                        }
-                    
-                    AlbumDetailView(album: album, onDelete: {
-                        viewModel.deleteAlbum(album)
-                        withAnimation {
-                            viewModel.selectedAlbum = nil
-                        }
-                    })
-                    .frame(maxWidth: 400)
-                    .padding()
-                    .shadow(radius: 10)
-                    .transition(.scale)
-                    .zIndex(1)
-                }
             }
-            .navigationTitle("My collection")
+            // set the navigation title
+            .navigationTitle("My Collection")
+            // present the AddAlbumView when the plus button is tapped
             .sheet(isPresented: $isShowingAddAlbum) {
                 AddAlbumView(collectionVM: viewModel)
+            }
+            // present AlbumDetailView when an album is selected
+            .sheet(item: $viewModel.selectedAlbum) { album in
+                AlbumDetailView(
+                    album: album,
+                    onDelete: {
+                        viewModel.deleteAlbum(album)
+                    }
+                )
+                .id(album.id)
             }
         }
     }

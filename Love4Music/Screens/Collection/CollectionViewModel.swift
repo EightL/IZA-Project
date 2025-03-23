@@ -1,19 +1,32 @@
+//
+//  CollectionViewModel.swift
+//  Love4Music
+//
+//  Created by Martin Ševčík on 19.03.2025.
+//
+
 import Foundation
 import SwiftUI
 
+
 class CollectionViewModel: ObservableObject {
+    // published properties to update the UI when the data changes
     @Published var albums: [SpotifyAlbum] = []
     @Published var selectedAlbum: SpotifyAlbum? = nil
     
+    // key used for storing albums in UserDefaults
     private let albumsKey = "savedAlbums"
     
+    // initializer that loads any previously saved albums
     init() {
         loadAlbums()
     }
     
+    // loads albums from UserDefaults
     func loadAlbums() {
         if let data = UserDefaults.standard.data(forKey: albumsKey) {
             do {
+                // decode the saved data into an array of SpotifyAlbum objects
                 albums = try JSONDecoder().decode([SpotifyAlbum].self, from: data)
             } catch {
                 print("Failed to load albums: \(error.localizedDescription)")
@@ -21,6 +34,7 @@ class CollectionViewModel: ObservableObject {
         }
     }
     
+    // saves the current albums array to UserDefaults
     func saveAlbums() {
         do {
             let data = try JSONEncoder().encode(albums)
@@ -30,16 +44,19 @@ class CollectionViewModel: ObservableObject {
         }
     }
     
+    // adds a new album if it doesn't already exist in the collection
     func addAlbum(_ album: SpotifyAlbum) {
-        // Avoid duplicates before adding
+        // check for duplicates by comparing album IDs
         if !albums.contains(where: { $0.id == album.id }) {
             albums.append(album)
             saveAlbums()
         }
     }
     
+    // deletes an album from the collection and updates any associated album lists
     func deleteAlbum(_ album: SpotifyAlbum) {
         albums.removeAll { $0.id == album.id }
         saveAlbums()
+        AlbumListsManager.shared.removeAlbum(album)
     }
 }

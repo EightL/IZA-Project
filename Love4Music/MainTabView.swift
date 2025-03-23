@@ -8,27 +8,34 @@
 import SwiftUI
 
 struct MainTabView: View {
+    // initial tab selection
+    @State private var selectedTab = 1
+    
     var body: some View {
-        TabView {
-            // First tab
+        TabView(selection: $selectedTab) {
+            // statistics tab - shows spotify statistics (top artists, top tracks, top genres, etc.)
             StatisticsView()
                 .tabItem {
                     Label("Statistics", systemImage: "chart.bar")
                 }
-
-            // Second tab
+                .tag(0)
+            
+            // collection tab - shows a grid of the users manually added albums
             CollectionView()
                 .tabItem {
                     Label("Collection", systemImage: "square.grid.2x2")
                 }
-
-            // Third tab
-            AccountView()
+                .tag(1)
+            
+            // dashboard tab - spotify signing handling, custom lists of albums, charts
+            DashboardView()
                 .tabItem {
-                    Label("Account", systemImage: "person.circle")
+                    Label("Dashboard", systemImage: "list.dash")
                 }
+                .tag(2)
         }
-        .accentColor(.accentColor)
+        .accentColor(.lightest)
+        .background(Color.dark)
     }
 }
 

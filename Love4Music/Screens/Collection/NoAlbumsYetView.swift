@@ -10,11 +10,14 @@ import SwiftUI
 struct NoAlbumsYetView: View {
     var body: some View {
         NavigationStack{
-            
             VStack{
+                // album mock image
+                Image("albumMock")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 100)
                 
-                
-                
+                // text
                 Text("Looks like you dont have any albums added yet!\n Click the plus button to add an album")
                     .font(.title2)
                     .fontWeight(.semibold)
@@ -25,12 +28,6 @@ struct NoAlbumsYetView: View {
                 
                 Spacer()
             }
-            
-            
         }
     }
-}
-
-#Preview {
-    NoAlbumsYetView()
 }
