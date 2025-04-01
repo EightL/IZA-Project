@@ -45,6 +45,7 @@ final class AlbumListsManager: ObservableObject {
         if !lists[index].albumIDs.contains(album.id) {
             lists[index].albumIDs.append(album.id)
             updateStoredLists()
+            NotificationCenter.default.post(name: Notification.Name("DataChanged"), object: nil)
         }
     }
     
@@ -53,6 +54,8 @@ final class AlbumListsManager: ObservableObject {
         guard let index = lists.firstIndex(where: { $0.id == list.id }) else { return }
         lists[index].albumIDs.removeAll { $0 == album.id }
         updateStoredLists()
+        NotificationCenter.default.post(name: Notification.Name("DataChanged"), object: nil)
+
     }
     
     // removes an album from all lists

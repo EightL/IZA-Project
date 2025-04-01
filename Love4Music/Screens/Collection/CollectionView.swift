@@ -62,6 +62,7 @@ struct CollectionView: View {
                         }
                         .padding()
                     }
+                    .id(viewModel.refreshTrigger)
                 }
                 
                 // floating plus button in the bottom-right corner

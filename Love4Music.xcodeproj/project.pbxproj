@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8F0DF5EA2D9020FD002B4895 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 8F0DF5E62D9020FD002B4895 /* README.md */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		8FF99D6F2D8B1B3900E27F36 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8F0DF5E62D9020FD002B4895 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8FF99D5E2D8B1B3800E27F36 /* Love4Music.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Love4Music.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FF99D6E2D8B1B3900E27F36 /* Love4MusicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Love4MusicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FF99D782D8B1B3900E27F36 /* Love4MusicUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Love4MusicUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -92,6 +97,7 @@
 				8FF99D712D8B1B3900E27F36 /* Love4MusicTests */,
 				8FF99D7B2D8B1B3900E27F36 /* Love4MusicUITests */,
 				8FF99D5F2D8B1B3800E27F36 /* Products */,
+				8F0DF5E62D9020FD002B4895 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -225,6 +231,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F0DF5EA2D9020FD002B4895 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

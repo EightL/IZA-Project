@@ -54,6 +54,7 @@ class AlbumDetailViewModel: ObservableObject {
     
     func saveRating() {
         UserDefaults.standard.set(rating, forKey: ratingKey)
+        NotificationCenter.default.post(name: Notification.Name("DataChanged"), object: nil)
     }
     
     // debounce notes saving

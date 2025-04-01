@@ -5,6 +5,7 @@ struct DashboardView: View {
     @State private var showCreateListSheet = false
     // unique identifier used to force a refresh of the charts
     @State private var refreshID = UUID()
+    @ObservedObject var listsManager = AlbumListsManager.shared
     
     var body: some View {
         NavigationStack {
@@ -31,6 +32,11 @@ struct DashboardView: View {
         // present the share sheet
         .sheet(isPresented: $viewModel.showShareSheet) {
             ShareSheet(items: viewModel.shareItems)
+        }
+        .onAppear {
+            NotificationCenter.default.addObserver(forName: Notification.Name("DataChanged"), object: nil, queue: .main) { _ in
+                refreshID = UUID()
+            }
         }
     }
     
@@ -64,11 +70,14 @@ struct DashboardView: View {
     // album lists section
     private var albumListsSection: some View {
         Section(header: albumListsHeader) {
-            ForEach(viewModel.albumLists) { list in
-                NavigationLink(destination: ListDetailView(albumList: list, collectionVM: viewModel.collectionVM)) {
+            // Use listsManager.lists directly
+            ForEach(listsManager.lists) { list in
+                NavigationLink(destination: ListDetailView(
+                    albumList: list,
+                    collectionVM: viewModel.collectionVM
+                )) {
                     AlbumListRow(list: list)
                 }
-                // swipe to delete
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button(role: .destructive) {
                         viewModel.deleteList(list)
@@ -76,7 +85,6 @@ struct DashboardView: View {
                         Label("Delete", systemImage: "trash")
                     }
                 }
-                // swipe to export
                 .swipeActions(edge: .leading, allowsFullSwipe: false) {
                     Button {
                         viewModel.exportList(list)
@@ -124,12 +132,6 @@ struct DashboardView: View {
     private var chartsHeader: some View {
         HStack {
             Text("Charts")
-            Spacer()
-            Button {
-                refreshID = UUID()
-            } label: {
-                Image(systemName: "arrow.clockwise")
-            }
         }
     }
 }

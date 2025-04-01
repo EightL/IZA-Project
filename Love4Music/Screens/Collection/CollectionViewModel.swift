@@ -13,6 +13,7 @@ class CollectionViewModel: ObservableObject {
     // published properties to update the UI when the data changes
     @Published var albums: [SpotifyAlbum] = []
     @Published var selectedAlbum: SpotifyAlbum? = nil
+    @Published var refreshTrigger = UUID()
     
     // key used for storing albums in UserDefaults
     private let albumsKey = "savedAlbums"
@@ -20,7 +21,18 @@ class CollectionViewModel: ObservableObject {
     // initializer that loads any previously saved albums
     init() {
         loadAlbums()
+        NotificationCenter.default.addObserver(
+                    self,
+                    selector: #selector(refreshData),
+                    name: Notification.Name("DataChanged"),
+                    object: nil
+        )
     }
+    
+    @objc private func refreshData() {
+            refreshTrigger = UUID()
+            loadAlbums() // Optional: reload from storage
+        }
     
     // loads albums from UserDefaults
     func loadAlbums() {
